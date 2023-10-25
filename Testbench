@@ -1,0 +1,94 @@
+module fifo_tb;
+
+    reg clk;
+    reg rst;
+    reg write_en;
+    reg read_en;
+    reg [7:0] data_in;
+    wire [7:0] data_out;
+    wire empty;
+    wire full;
+
+    // Instantiate the fifo module
+    fifo dut (
+        .clk(clk),
+        .rst(rst),
+        .write_en(write_en),
+        .read_en(read_en),
+        .data_in(data_in),
+        .data_out(data_out),
+        .empty(empty),
+        .full(full)
+    );
+
+    // Clock generation
+    always begin
+        #5 clk = ~clk;
+    end
+
+    initial begin
+        clk = 0;
+        rst = 1; // Initial reset
+        write_en = 0;
+        read_en = 0;
+        data_in = 8'b0;
+
+        // Reset sequence
+        #10 rst = 1;
+        #20 rst = 0;
+
+        // Test writing to and reading from the FIFO
+
+        // Writing to FIFO
+        #30 write_en = 1;
+        data_in = 8'b0000_0000; // Input data
+        #10;
+        data_in = 8'b0000_0001;
+        #10;
+        data_in = 8'b0000_0010;
+        #10;
+        data_in = 8'b0000_0011;
+        #10;
+        data_in = 8'b0000_0100;
+        #10;
+        data_in = 8'b0000_0101;
+        #10;
+        data_in = 8'b0000_0110;
+        #10;
+        data_in = 8'b0000_0111;
+        #10;
+data_in = 8'b0000_1000;
+      #10;
+data_in = 8'b0000_1001;
+      #10;
+data_in = 8'b0000_1010;
+      #10;
+data_in = 8'b0000_1011;
+      #10;
+data_in = 8'b0000_1100;
+      #10;
+data_in = 8'b0000_1101;
+      #10;
+data_in = 8'b0000_1110;
+#10;
+data_in = 8'b0000_1111;
+#10;
+        write_en = 0;
+
+        // Reading from FIFO
+#20 read_en=1;
+        #10 $display("Read data: %b", data_out);
+        #10 $display("Read data: %b", data_out);
+        #10 $display("Read data: %b", data_out);
+        #10 $display("Read data: %b", data_out);
+        #10 $display("Read data: %b", data_out);
+        #10 $display("Read data: %b", data_out);
+        #10 $display("Read data: %b", data_out);
+        #10 $display("Read data: %b", data_out);
+        read_en=0;
+
+        // End simulation
+        #10 $finish;
+    end
+
+endmodule
