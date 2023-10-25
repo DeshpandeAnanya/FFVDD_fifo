@@ -1,0 +1,40 @@
+module fifo (
+    input wire clk,
+    input wire rst,
+    input wire write_en,
+    input wire read_en,
+    input wire [7:0] data_in,
+    output reg [7:0] data_out,
+    output wire empty,
+    output wire full
+);
+
+    parameter DEPTH = 8; // Depth of the FIFO
+
+    reg [7:0] memory [0:DEPTH-1];
+    reg [3:0] write_ptr = 4'b0000;
+    reg [3:0] read_ptr = 4'b0000;
+    reg [3:0] count = 0;
+
+    assign empty = (count == 0);
+    assign full = (count == DEPTH);
+
+    always @(posedge clk) begin
+        if (rst) begin
+            write_ptr <= 4'b0000;
+            read_ptr <= 4'b0000;
+            count <= 0;
+        end else begin
+            if (write_en && !full) begin
+                memory[write_ptr] <= data_in;
+                write_ptr <= write_ptr + 1;
+                count <= count + 1;
+            end
+            if (read_en && !empty) begin
+                data_out <= memory[read_ptr];
+                read_ptr <= read_ptr + 1;
+                count <= count - 1;
+            end
+        end
+    end
+endmodule
